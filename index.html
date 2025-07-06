@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personel İzin Raporu</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-calendar-check"></i>
+                    <h1>Personel İzin Raporu</h1>
+                </div>
+                <div class="header-info">
+                    <span class="date-info" id="currentDate"></span>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Excel Dosyası Yükleme -->
+            <section class="upload-section" id="uploadSection">
+                <div class="upload-card">
+                    <div class="upload-icon">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <h2>Excel Dosyasını Yükleyin</h2>
+                    <p>Personel izin listesi Excel dosyanızı seçin</p>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" class="file-input">
+                    <label for="excelFile" class="upload-btn">
+                        <i class="fas fa-upload"></i>
+                        Dosya Seç
+                    </label>
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="fileName"></span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rapor Ayarları -->
+            <section class="report-section" id="reportSection" style="display: none;">
+                <div class="settings-card">
+                    <h2><i class="fas fa-cog"></i> Rapor Ayarları</h2>
+                    <div class="date-picker-container">
+                        <div class="date-input-group">
+                            <label for="startDate">
+                                <i class="fas fa-calendar-alt"></i>
+                                Başlangıç Tarihi
+                            </label>
+                            <input type="date" id="startDate" class="date-input">
+                        </div>
+                        <div class="date-input-group">
+                            <label for="endDate">
+                                <i class="fas fa-calendar-alt"></i>
+                                Bitiş Tarihi
+                            </label>
+                            <input type="date" id="endDate" class="date-input">
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="generateReport" class="btn-primary">
+                            <i class="fas fa-chart-bar"></i>
+                            Rapor Oluştur
+                        </button>
+                        <button id="printReport" class="btn-secondary" style="display: none;">
+                            <i class="fas fa-print"></i>
+                            Yazdır
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Rapor Sonuçları -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <div class="results-header">
+                    <h2><i class="fas fa-table"></i> Haftalık İzin Raporu</h2>
+                    <div class="report-info">
+                        <span id="reportDateRange"></span>
+                        <span id="totalEmployees"></span>
+                    </div>
+                </div>
+
+
+
+                <div id="weeklyReports" class="weekly-reports"></div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2025 Personel İzin Raporu Sistemi | dev. by buraknecipcivan</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    
+    <!-- Print için özel stil enjeksiyonu -->
+    <script>
+        window.addEventListener('beforeprint', function() {
+            // Yazdırma öncesi tarayıcı ayarları için uyarı
+            console.log('Yazdırma başlıyor - tarayıcı ayarlarında "Header ve Footer" seçeneğini kapatın');
+        });
+    </script>
+</body>
+</html> 

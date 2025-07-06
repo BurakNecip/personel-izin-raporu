@@ -1,0 +1,29 @@
+# Sistem dosyaları
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Geçici dosyalar
+*.tmp
+*.temp
+~$*.xlsx
+~$*.xls
+
+# IDE/Editor dosyaları
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Log dosyaları
+*.log
+
+# Test dosyaları (isteğe bağlı)
+test*.xlsx
+test*.xls
+
+# Node modules (eğer gelecekte kullanılırsa)
+node_modules/
+
+# Cache dosyaları
+.cache/ 
