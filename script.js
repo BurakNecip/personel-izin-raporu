@@ -748,7 +748,8 @@ function calculateLeaveDays(startDate, endDate) {
 
 function getEmployeeLeaveDays(employee) {
     const adminDays = calculateLeaveDays(employee.adminLeaveStart, employee.adminLeaveEnd);
-    const annualDays = calculateLeaveDays(employee.annualLeaveStart, employee.annualLeaveEnd);
+    // Yıllık izin gününü doğrudan Excel'den al
+    const annualDays = employee.annualLeaveDays || 0;
     
     return {
         adminDays: adminDays,
