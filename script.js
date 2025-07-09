@@ -123,9 +123,9 @@ function processExcelData(data) {
             console.log(`  Yıllık izin bitiş parse ediliyor...`);
             employee.annualLeaveEnd = parseExcelDate(row[5]);
             
-            // İş başlama (Sütun 8 = index 7)
-            console.log(`  İş başlama tarihi parse ediliyor...`);
-            employee.workStartDate = parseExcelDate(row[7]);
+            // İş başlama tarihi artık Excel'den okunmuyor, hesaplanıyor
+            console.log(`  İş başlama tarihi hesaplanıyor...`);
+            employee.workStartDate = calculateWorkStartDate(employee);
             
             console.log(`  ✅ ${employee.name} özeti:`);
             console.log(`    İdari izin: ${employee.adminLeaveStart ? `${employee.adminLeaveStart.toLocaleDateString('tr-TR')} - ${employee.adminLeaveEnd?.toLocaleDateString('tr-TR')}` : 'Yok'}`);
@@ -137,6 +137,63 @@ function processExcelData(data) {
     }).filter(emp => emp.name); // Boş isimleri filtrele
     
     console.log(`Toplam ${employeeData.length} personel işlendi`);
+}
+
+// İşe başlama tarihi hesaplama fonksiyonu
+function calculateWorkStartDate(employee) {
+    console.log(`  🔍 ${employee.name} için işe başlama tarihi hesaplanıyor...`);
+    
+    // İdari izin bitiş tarihi
+    const adminLeaveEnd = employee.adminLeaveEnd;
+    console.log(`    İdari izin bitiş: ${adminLeaveEnd ? adminLeaveEnd.toLocaleDateString('tr-TR') : 'Yok'}`);
+    
+    // Yıllık izin bitiş tarihi
+    const annualLeaveEnd = employee.annualLeaveEnd;
+    console.log(`    Yıllık izin bitiş: ${annualLeaveEnd ? annualLeaveEnd.toLocaleDateString('tr-TR') : 'Yok'}`);
+    
+    // En ileri tarihi bul
+    let latestLeaveEnd = null;
+    
+    if (adminLeaveEnd && annualLeaveEnd) {
+        // Her iki izin de var, hangisi daha ileri?
+        if (adminLeaveEnd > annualLeaveEnd) {
+            latestLeaveEnd = adminLeaveEnd;
+            console.log(`    İdari izin bitiş daha ileri: ${latestLeaveEnd.toLocaleDateString('tr-TR')}`);
+        } else {
+            latestLeaveEnd = annualLeaveEnd;
+            console.log(`    Yıllık izin bitiş daha ileri: ${latestLeaveEnd.toLocaleDateString('tr-TR')}`);
+        }
+    } else if (adminLeaveEnd) {
+        // Sadece idari izin var
+        latestLeaveEnd = adminLeaveEnd;
+        console.log(`    Sadece idari izin var: ${latestLeaveEnd.toLocaleDateString('tr-TR')}`);
+    } else if (annualLeaveEnd) {
+        // Sadece yıllık izin var
+        latestLeaveEnd = annualLeaveEnd;
+        console.log(`    Sadece yıllık izin var: ${latestLeaveEnd.toLocaleDateString('tr-TR')}`);
+    } else {
+        // Hiç izin yok
+        console.log(`    Hiç izin bulunamadı, işe başlama tarihi hesaplanamıyor`);
+        return null;
+    }
+    
+    // En ileri tarihten sonraki ilk pazartesi gününü bul
+    const workStartDate = getNextMonday(latestLeaveEnd);
+    console.log(`    ✅ İşe başlama tarihi: ${workStartDate.toLocaleDateString('tr-TR')} (Pazartesi)`);
+    
+    return workStartDate;
+}
+
+// Verilen tarihten sonraki ilk pazartesi gününü bulan fonksiyon
+function getNextMonday(date) {
+    const result = new Date(date);
+    
+    // Pazartesi = 1, Pazar = 0
+    const currentDay = result.getDay();
+    const daysUntilMonday = currentDay === 0 ? 1 : (8 - currentDay);
+    
+    result.setDate(result.getDate() + daysUntilMonday);
+    return result;
 }
 
 function parseExcelDate(value, baseDate = null) {
