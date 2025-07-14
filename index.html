@@ -67,7 +67,11 @@
                     <div class="action-buttons">
                         <button id="generateReport" class="btn-primary">
                             <i class="fas fa-chart-bar"></i>
-                            Rapor Oluştur
+                            Detaylı Rapor
+                        </button>
+                        <button id="generateSummaryReport" class="btn-secondary">
+                            <i class="fas fa-list"></i>
+                            Özet Rapor
                         </button>
                         <button id="printReport" class="btn-secondary" style="display: none;">
                             <i class="fas fa-print"></i>
@@ -80,7 +84,7 @@
             <!-- Rapor Sonuçları -->
             <section class="results-section" id="resultsSection" style="display: none;">
                 <div class="results-header">
-                    <h2><i class="fas fa-table"></i> Haftalık İzin Raporu</h2>
+                    <h2><i class="fas fa-table"></i> <span id="reportTitle">Haftalık İzin Raporu</span></h2>
                     <div class="report-info">
                         <span id="reportDateRange"></span>
                         <span id="totalEmployees"></span>
