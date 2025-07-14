@@ -14,6 +14,7 @@ function initializeApp() {
     // Event listener'ları ekle
     document.getElementById('excelFile').addEventListener('change', handleFileUpload);
     document.getElementById('generateReport').addEventListener('click', generateWeeklyReport);
+    document.getElementById('generateSummaryReport').addEventListener('click', generateSummaryReport);
     document.getElementById('printReport').addEventListener('click', printReport);
     
     // Varsayılan tarih aralığını ayarla
@@ -84,11 +85,10 @@ function processExcelData(data) {
     
     const headers = data[0];
     const rows = data.slice(1);
+
+    // TELEFON sütununun indexini bul
+    const telefonIndex = headers.findIndex(h => h && h.toString().toUpperCase().trim() === 'TELEFON');
     
-    console.log('Excel headers:', headers);
-    console.log('Raw data rows:', rows.length);
-    
-    // Excel dosyasındaki personelleri sırasıyla işle (orijinal sıralama korunacak)
     employeeData = rows.map((row, index) => {
         console.log(`\n--- Personel ${index + 1} ---`);
         console.log(`Satır verisi:`, row);
@@ -101,7 +101,8 @@ function processExcelData(data) {
             annualLeaveStart: null,
             annualLeaveEnd: null,
             annualLeaveDays: parseInt(row[6]) || 0,  // Sütun 6: KAÇ GÜN?
-            workStartDate: null
+            workStartDate: null,
+            telefon: telefonIndex !== -1 ? (row[telefonIndex] || '') : ''
         };
         
         if (employee.name) {
@@ -326,6 +327,40 @@ function generateWeeklyReport() {
     
     weeklyReportData = generateWeeklyData(reportStartDate, endDate);
     displayWeeklyReport(startDate, endDate);
+    
+    // Rapor başlığını güncelle
+    document.getElementById('reportTitle').textContent = 'Detaylı Haftalık İzin Raporu';
+    
+    // Yazdır butonunu göster
+    document.getElementById('printReport').style.display = 'inline-flex';
+    document.getElementById('resultsSection').style.display = 'block';
+}
+
+function generateSummaryReport() {
+    const startDateInput = document.getElementById('startDate').value;
+    const endDateInput = document.getElementById('endDate').value;
+    
+    if (!startDateInput || !endDateInput) {
+        alert('Lütfen başlangıç ve bitiş tarihlerini seçin.');
+        return;
+    }
+    
+    const startDate = new Date(startDateInput);
+    const endDate = new Date(endDateInput);
+    
+    if (startDate >= endDate) {
+        alert('Başlangıç tarihi bitiş tarihinden önce olmalıdır.');
+        return;
+    }
+    
+    // Pazartesi gününden başlayacak şekilde ayarla
+    const reportStartDate = getMonday(startDate);
+    
+    weeklyReportData = generateWeeklyData(reportStartDate, endDate);
+    displaySummaryReport(startDate, endDate);
+    
+    // Rapor başlığını güncelle
+    document.getElementById('reportTitle').textContent = 'Özet Haftalık İzin Raporu';
     
     // Yazdır butonunu göster
     document.getElementById('printReport').style.display = 'inline-flex';
@@ -743,6 +778,131 @@ function displayWeeklyReport(startDate, endDate) {
     
     // Grid'i ana container'a ekle
     weeklyReports.appendChild(weeklyGridDiv);
+    
+    // Alt bilgi ekle
+    const footerDiv = document.createElement('div');
+    footerDiv.className = 'report-footer';
+    footerDiv.innerHTML = `
+        <div class="footer-content">
+            <p>dev. by buraknecipcivan</p>
+        </div>
+    `;
+    weeklyReports.appendChild(footerDiv);
+}
+
+function displaySummaryReport(startDate, endDate) {
+    const reportDateRange = document.getElementById('reportDateRange');
+    const totalEmployees = document.getElementById('totalEmployees');
+    const weeklyReports = document.getElementById('weeklyReports');
+    
+    // Rapor bilgilerini güncelle
+    reportDateRange.textContent = `${formatDate(startDate)} - ${formatDate(endDate)}`;
+    totalEmployees.textContent = `Toplam ${employeeData.length} Personel`;
+    
+    // Özet rapor için sadece haftalık listeler
+    weeklyReports.innerHTML = '';
+    
+    // Haftalık raporlar için grid container
+    const weeklyGridDiv = document.createElement('div');
+    weeklyGridDiv.className = 'weekly-grid summary-grid';
+    
+    // Haftalık raporları oluştur
+    weeklyReportData.forEach((week, index) => {
+        const weekDiv = document.createElement('div');
+        weekDiv.className = 'week-report summary-week';
+        
+        const weekHeaderHtml = `
+            <div class="week-header">
+                <div class="week-title">
+                    <i class="fas fa-calendar-week"></i>
+                    ${getWeekTitle(week.weekStart)}
+                </div>
+                <div class="week-dates">
+                    ${formatDate(week.weekStart)} - ${formatDate(week.weekEnd)}
+                </div>
+                <div class="employee-count">
+                    ${week.employees.length} Kişi
+                </div>
+            </div>
+        `;
+        
+        let weekContentHtml = '';
+        
+        if (week.employees.length === 0) {
+            weekContentHtml = `
+                <div class="empty-week">
+                    <i class="fas fa-user-slash"></i>
+                    <div>Çalışan yok</div>
+                </div>
+            `;
+        } else {
+            weekContentHtml = `
+                <div class="employee-list">
+                    ${week.employees.map((employee, index) => {
+                        return `
+                        <div class="employee-item">
+                            <span class="employee-number">${index + 1}</span>
+                            <span class="employee-name">${employee.name}</span>
+                        </div>
+                    `;
+                    }).join('')}
+                </div>
+            `;
+        }
+        
+        weekDiv.innerHTML = weekHeaderHtml + weekContentHtml;
+        weeklyGridDiv.appendChild(weekDiv);
+    });
+    
+    // Grid'i ana container'a ekle
+    weeklyReports.appendChild(weeklyGridDiv);
+
+    // --- TELEFON REHBERİ ---
+    const phoneBookDiv = document.createElement('div');
+    phoneBookDiv.className = 'phone-book-print';
+    phoneBookDiv.innerHTML = createPhoneBookHtml();
+    weeklyReports.appendChild(phoneBookDiv);
+    
+    // Alt bilgi ekle
+    const footerDiv = document.createElement('div');
+    footerDiv.className = 'report-footer';
+    footerDiv.innerHTML = `
+        <div class="footer-content">
+            <p>dev. by buraknecipcivan</p>
+        </div>
+    `;
+    weeklyReports.appendChild(footerDiv);
+}
+
+function createPhoneBookHtml() {
+    // Sadece adı ve telefon numarası olanları al
+    const phoneList = employeeData
+        .filter(emp => emp.name && emp.telefon)
+        .sort((a, b) => a.originalIndex - b.originalIndex);
+    if (phoneList.length === 0) return '';
+    // 4 sütunlu tabloya böl
+    const colCount = 4;
+    const rowCount = Math.ceil(phoneList.length / colCount);
+    let columns = Array.from({length: colCount}, () => []);
+    phoneList.forEach((emp, i) => {
+        columns[i % colCount].push(emp);
+    });
+    let table = '<div class="phone-book-title"><i class="fas fa-address-book"></i> Telefon Rehberi</div>';
+    table += '<div class="phone-book-table"><table><tbody>';
+    for (let r = 0; r < rowCount; r++) {
+        table += '<tr>';
+        for (let c = 0; c < colCount; c++) {
+            const emp = columns[c][r];
+            if (emp) {
+                table += `<td><span class='pb-name'>${emp.name}</span><br><span class='pb-phone'>${emp.telefon}</span></td>`;
+            } else {
+                table += '<td></td>';
+            }
+        }
+        table += '</tr>';
+    }
+    table += '</tbody></table></div>';
+    return table;
 }
 
 function getWeekTitle(date) {
