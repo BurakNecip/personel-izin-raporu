@@ -751,6 +751,24 @@ body {
     font-size: 0.9rem;
 }
 
+/* Rapor Alt Bilgisi */
+.report-footer {
+    margin-top: 30px;
+    padding: 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.footer-content p {
+    color: #667eea;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
@@ -789,6 +807,15 @@ body {
     
     .report-info {
         text-align: center;
+    }
+    
+    .report-footer {
+        margin-top: 20px;
+        padding: 15px;
+    }
+    
+    .footer-content p {
+        font-size: 0.8rem;
     }
 }
 
@@ -901,6 +928,24 @@ body {
         padding: 10pt;
         border-top: 1px solid #ddd;
         page-break-inside: avoid;
+    }
+    
+    .report-footer {
+        display: block !important;
+        text-align: center;
+        background: white;
+        color: #666 !important;
+        font-size: 10pt;
+        padding: 10pt;
+        margin-top: 20pt;
+        border-top: 1px solid #ddd;
+        page-break-inside: avoid;
+    }
+    
+    .footer-content p {
+        color: #000 !important;
+        font-weight: 500;
+        margin: 0;
     }
     
     /* Hafta raporlarının sayfa sonu kontrolleri */
@@ -1034,6 +1079,391 @@ body {
         gap: 15pt !important;
         orphans: 3 !important;
         widows: 3 !important;
+    }
+}
+
+/* Özet Rapor Stilleri */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.summary-week {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-height: 200px;
+}
+
+.summary-week:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+.employee-list {
+    margin-top: 10px;
+}
+
+.employee-item {
+    display: flex;
+    align-items: center;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.85rem;
+}
+
+.employee-item:last-child {
+    border-bottom: none;
+}
+
+.employee-item .employee-number {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.employee-item .employee-name {
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+/* Yazdırma için özet rapor stilleri - YATAY LAYOUT */
+@media print {
+    .summary-grid {
+        display: block !important;
+        grid-template-columns: none !important;
+        gap: 0 !important;
+        margin-top: 0 !important;
+        page-break-inside: auto !important;
+    }
+    
+    .summary-week {
+        display: block !important;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 6px !important;
+        box-shadow: none;
+        min-height: auto !important;
+    }
+    
+    .week-header {
+        margin-bottom: 4px !important;
+        padding-bottom: 3px !important;
+        border-bottom: 1px solid #667eea !important;
+    }
+    
+    .week-title {
+        font-size: 0.7rem !important;
+        margin-bottom: 1px !important;
+        font-weight: 600;
+    }
+    
+    .week-title i {
+        font-size: 0.6rem !important;
+        margin-right: 3px !important;
+    }
+    
+    .week-dates {
+        font-size: 0.55rem !important;
+        color: #666;
+        margin-bottom: 2px !important;
+    }
+    
+    .employee-count {
+        font-size: 0.6rem !important;
+        color: #27ae60;
+        font-weight: 600;
+    }
+    
+    .employee-list {
+        margin-top: 4px !important;
+    }
+    
+    .employee-item {
+        padding: 1px 0 !important;
+        font-size: 0.6rem !important;
+        line-height: 1.1 !important;
+    }
+    
+    .employee-item .employee-number {
+        width: 14px !important;
+        height: 14px !important;
+        font-size: 0.5rem !important;
+        margin-right: 4px !important;
+    }
+    
+    .employee-item .employee-name {
+        font-size: 0.6rem !important;
+    }
+    
+    /* Yatay sayfa için özel ayarlar */
+    @page {
+        size: A4 landscape;
+        margin: 8mm;
+    }
+    
+    /* Boş hafta mesajı için */
+    .empty-week {
+        font-size: 0.6rem !important;
+        padding: 8px !important;
+    }
+    
+    .empty-week i {
+        font-size: 0.7rem !important;
+    }
+    
+    /* Header'ı yazdırma sırasında gizle */
+    .header {
+        display: none !important;
+    }
+    
+    /* Footer'ı yazdırma sırasında gizle */
+    .footer {
+        display: none !important;
+    }
+    
+    /* Upload ve settings bölümlerini gizle */
+    .upload-section,
+    .report-section {
+        display: none !important;
+    }
+    
+    /* Results section'ı optimize et */
+    .results-section {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .results-header {
+        margin-bottom: 10px !important;
+        padding: 0 !important;
+    }
+    
+    .results-header h2 {
+        font-size: 1.2rem !important;
+        margin: 0 !important;
+    }
+    
+    .report-info {
+        font-size: 0.8rem !important;
+        margin-top: 5px !important;
+    }
+    
+    .report-info span {
+        margin-right: 15px !important;
+    }
+}
+
+/* Mobil uyumluluk için özet rapor */
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .summary-week {
+        padding: 15px;
+    }
+    
+    .employee-item {
+        padding: 6px 0;
+        font-size: 0.9rem;
+    }
+    
+    .employee-item .employee-number {
+        width: 22px;
+        height: 22px;
+        font-size: 0.75rem;
+        margin-right: 10px;
+    }
+}
+
+@media print {
+    .summary-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px !important;
+        margin-top: 8px !important;
+        page-break-inside: auto !important;
+    }
+    .summary-week {
+        display: block !important;
+        background: white;
+        border: 1px solid #ddd;
+        padding: 6px !important;
+        box-shadow: none;
+        min-height: auto !important;
+    }
+    .employee-list {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        margin-top: 6px !important;
+    }
+    .employee-item {
+        display: flex !important;
+        align-items: center !important;
+        background: #f5f5f5 !important;
+        border-radius: 8px !important;
+        padding: 2px 8px !important;
+        font-size: 0.7rem !important;
+        margin: 0 !important;
+        border: 1px solid #e0e0e0 !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        white-space: nowrap !important;
+    }
+    .employee-item .employee-number {
+        background: #667eea !important;
+        color: white !important;
+        width: 16px !important;
+        height: 16px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 0.6rem !important;
+        font-weight: 600 !important;
+        margin-right: 4px !important;
+        flex-shrink: 0 !important;
+    }
+    .employee-item .employee-name {
+        font-size: 0.7rem !important;
+        color: #222 !important;
+        font-weight: 500 !important;
+    }
+    .empty-week {
+        font-size: 0.7rem !important;
+        padding: 8px !important;
+    }
+    .empty-week i {
+        font-size: 0.7rem !important;
+    }
+    .header, .footer, .upload-section, .report-section {
+        display: none !important;
+    }
+    .results-section {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    .results-header {
+        margin-bottom: 10px !important;
+        padding: 0 !important;
+    }
+    .results-header h2 {
+        font-size: 1.2rem !important;
+        margin: 0 !important;
+    }
+    .report-info {
+        font-size: 0.8rem !important;
+        margin-top: 5px !important;
+    }
+    .report-info span {
+        margin-right: 15px !important;
+    }
+    @page {
+        size: A4 landscape;
+        margin: 8mm;
+    }
+}
+
+/* Telefon Rehberi Yazdırma Stili */
+.phone-book-print {
+    page-break-before: always;
+    margin-top: 24px;
+    margin-bottom: 0;
+    padding: 0;
+}
+.phone-book-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.phone-book-title i {
+    font-size: 1.2rem;
+}
+.phone-book-table {
+    width: 100%;
+    overflow-x: auto;
+}
+.phone-book-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.phone-book-table td {
+    padding: 4px 10px;
+    border: none;
+    vertical-align: top;
+    min-width: 120px;
+    max-width: 200px;
+    word-break: break-word;
+    text-align: left;
+}
+.pb-name {
+    font-weight: 600;
+    color: #222;
+    font-size: 0.9em;
+}
+.pb-phone {
+    color: #444;
+    font-size: 0.85em;
+    letter-spacing: 1px;
+}
+@media print {
+    .phone-book-print {
+        page-break-before: always;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding: 0;
+    }
+    .phone-book-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-align: center;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+    .phone-book-title i {
+        font-size: 1.2rem;
+    }
+    .phone-book-table table {
+        font-size: 0.7rem;
+    }
+    .phone-book-table td {
+        padding: 2px 6px;
+        min-width: 90px;
+        max-width: 160px;
+    }
+    .pb-name {
+        font-size: 0.8em;
+    }
+    .pb-phone {
+        font-size: 0.7em;
     }
 }
 
